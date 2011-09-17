@@ -1,0 +1,39 @@
+#!/bin/sh
+
+ACCOUNT_NAME=$1
+
+DMAIL_HOME=/home/hiropipi/dmail
+
+SYM_LINK_FILES="dmaildata.rb dmail.db dmail-reminder.rb dmail-repgen.rb num-utils.rb"
+CP_FILES="config.rb report-msg.txt remind-msg.txt"
+
+echo '0 23 * * *	'$DMAIL_HOME/$ACCOUNT_NAME/dmail-reminder.rb >> crontab
+
+echo "$ACCOUNT_NAME:	|$DMAIL_HOME/$ACCOUNT_NAME/dmail-repgen.rb" >> aliases
+
+mkdir $ACCOUNT_NAME
+
+for i in $SYM_LINK_FILES; do
+  ln -s $DMAIL_HOME/$i $DMAIL_HOME/$ACCOUNT_NAME/$i
+done
+
+for i in $CP_FILES; do
+  cp $DMAIL_HOME/$i $DMAIL_HOME/$ACCOUNT_NAME/$i
+done
+
+cat <<'EndOfConfigData' >$DMAIL_HOME/$ACCOUNT_NAME/config.rb
+$SMTP_SERVER = 'dmail.pgw.jp'
+$DOMAIN_NAME = 'dmail.pgw.jp'
+$DMAIL_DB = '/home/hiropipi/dmail/dmail.db'
+
+$DATE_OFFSET = 0
+
+#$TO_ADDR = ['hiropipi@i.softbank.jp', 'kamick@ezweb.ne.jp']
+#$TO_ADDR = ['hiropipi@i.softbank.jp']
+
+EndOfConfigData
+
+echo '$FROM_ADDR =' '"'$ACCOUNT_NAME@dmail.pgw.jp'"' >>$DMAIL_HOME/$ACCOUNT_NAME/config.rb
+echo '$REPORT_MSG_FILE =' '"'$DMAIL_HOME/$ACCOUNT_NAME/report-msg.txt'"' >>$DMAIL_HOME/$ACCOUNT_NAME/config.rb
+echo '$REMIND_MSG_FILE =' '"'$DMAIL_HOME/$ACCOUNT_NAME/remind-msg.txt'"' >>$DMAIL_HOME/$ACCOUNT_NAME/config.rb
+

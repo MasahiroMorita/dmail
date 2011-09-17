@@ -1,0 +1,34 @@
+(費消率: #{sprintf("%4.1f%%", date.day*100.0/Date.new(date.year, date.month, -1).day)})
+#{date.strftime("%Y/%m/%d")}(#{date.wday_name})実績
+
+実績   #{calc(:today_actual).to_comma}
+先週比 #{if nz(calc(:lastweek_actual)) then calc(:today_actual).change_ratio(calc(:lastweek_actual)).to_s_percent else "-" end}
+月平均 #{calc(:thismonth_avg).to_i.to_comma}
+平均対比   #{if calc(:today_actual) > calc(:thismonth_avg) then "(^O^)" else "(>_<)" end}
+
+■#{(date-date.wday).strftime("%Y/%m/%d")}週累計
+実績   #{calc(:thisweek_sum).to_comma}
+先週比 #{if nz(calc(:lastweek_sum)) then calc(:thisweek_sum).change_ratio(calc(:lastweek_sum)).to_s_percent else "-" end}
+
+■#{date.month}月累計
+実績   #{calc(:thismonth_sum).to_comma}
+目標   #{calc(:thismonth_target).to_comma}
+
+達成率 #{if nz(calc(:thismonth_target)) then calc(:thismonth_sum).ratio(calc(:thismonth_target)).to_percent else "-" end}
+前月比 #{if nz(calc(:lastmonth_sum)) then calc(:thismonth_sum).change_ratio(calc(:lastmonth_sum)).to_s_percent else "-" end}
+
+■目標差分
+差分   #{if calc(:thismonth_sum) > calc(:thismonth_target) then "達成" else (calc(:thismonth_sum)-calc(:thismonth_target)).to_comma end}
+残日数 #{Date.new(date.year, date.month, -1)-date}日
+
+平均必要日商
+       #{if calc(:thismonth_sum) > calc(:thismonth_target) then "達成" elsif Date.new(date.year, date.month, -1) > date then ((-calc(:thismonth_sum)+calc(:thismonth_target))/(Date.new(date.year, date.month, -1)-date)).to_i.to_comma else (-calc(:thismonth_sum)+calc(:thismonth_target)).to_i.to_comma end}
+
+■明日#{(date+1).strftime("%Y/%m/%d")}の参考値
+先週#{(date+1).wday_name}曜日実績
+       #{if nz(calc(:lastweek_tomorrow)) then calc(:lastweek_tomorrow).to_comma else "-" end}
+4週前#{(date+1).wday_name}曜日実績
+       #{if nz(calc(:lastmonth_tomorrow)) then calc(:lastmonth_tomorrow).to_comma else "-" end}
+
+---------------
+本日もお疲れ様でした

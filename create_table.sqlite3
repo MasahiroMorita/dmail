@@ -1,0 +1,8 @@
+
+create table dmail_data (
+	id integer primary key,
+	timestamp text not null,
+	user_id text not null,
+	tag text not null,
+	value integer not null
+);
